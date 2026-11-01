@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    command: 
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: crm_db
+      MYSQL_USER: crm_user
+      MYSQL_PASSWORD: crm_password
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_data:/var/lib/mysql
+    networks:
+      - crm-network
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+  adminer:
+    image: adminer
+    networks:
+      - crm-network
+    ports:
+      - target: 8080
+        published: 8887
+        mode: host
+    deploy:
+      replicas: 1
+
+  backend:
+    image: crm-backend:latest
+    networks:
+      - crm-network
+    deploy:
+      replicas: 2
+      endpoint_mode: dnsrr
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+
+  frontend:
+    image: crm-frontend:latest
+    networks:
+      - crm-network
+    deploy:
+      replicas: 2
+      endpoint_mode: dnsrr
+
+  proxy:
+    image: crm-proxy:latest
+    networks:
+      - crm-network
+    ports:
+      - target: 80
+        published: 8888
+        mode: host
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+networks:
+  crm-network:
+    driver: overlay # Для Swarm используем overlay-сеть!
+    attachable: true
+
+volumes:
+  db_data:

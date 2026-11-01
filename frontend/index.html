@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>CRM: Управление клиентами</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Система управления данными клиентов</h1>
+        
+        <h2>Добавить нового клиента</h2>
+        <form id="clientForm">
+            <div class="form-row">
+                <div class="form-group"><input type="text" id="full_name" placeholder="ФИО" required></div>
+                <div class="form-group"><input type="text" id="phone" placeholder="Телефон" required></div>
+                <div class="form-group"><input type="email" id="email" placeholder="Email"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <select id="service_type">
+                        <option value="Кредит">Кредит</option>
+                        <option value="Ипотека">Ипотека</option>
+                        <option value="Страхование жизни">Страхование жизни</option>
+                        <option value="КАСКО">КАСКО</option>
+                        <option value="Вклад">Вклад</option>
+                    </select>
+                </div>
+                <div class="form-group"> 
+                    <select id="status">
+                        <option value="Новый">Новый</option>
+                        <option value="В работе">В работе</option>
+                        <option value="Отказ">Отказ</option>
+                        <option value="Сделка закрыта">Сделка закрыта</option>
+                    </select>
+                </div>
+                <div class="form-group"><button type="submit">Добавить</button></div>
+            </div>
+        </form>
+
+        <h2>Список клиентов</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>ФИО</th>
+                    <th>Телефон</th>
+                    <th>Email</th>
+                    <th>Услуга</th>
+                    <th>Статус</th>
+                    <th>Действие</th>
+                </tr>
+            </thead>
+            <tbody id="clientsTableBody">
+                
+            </tbody>
+        </table>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

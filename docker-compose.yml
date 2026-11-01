@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: crm-db
+    command: 
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: crm_db
+      MYSQL_USER: crm_user
+      MYSQL_PASSWORD: crm_password
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_data:/var/lib/mysql
+    networks:
+      - crm-network
+
+  adminer:
+    image: adminer
+    container_name: crm-adminer
+    ports:
+      - "8887:8080"
+    depends_on:
+      - db
+    networks:
+      - crm-network
+
+  backend:
+    build: ./backend
+    container_name: crm-backend
+    depends_on:
+      - db
+    networks:
+      - crm-network
+
+  frontend:
+    build: ./frontend
+    container_name: crm-frontend
+    networks:
+      - crm-network
+
+  proxy:
+    build: ./proxy
+    container_name: crm-proxy
+    ports:
+      - "8888:80"
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - crm-network
+
+networks:
+  crm-network:
+    driver: bridge
+
+volumes:
+  db_data:
