@@ -38,7 +38,6 @@ services:
       - crm-network
     deploy:
       replicas: 2
-      endpoint_mode: dnsrr
       update_config:
         parallelism: 1
         delay: 10s
@@ -51,7 +50,6 @@ services:
       - crm-network
     deploy:
       replicas: 2
-      endpoint_mode: dnsrr
 
   proxy:
     image: ghcr.io/highbluejameveu/crm-proxy:latest
@@ -68,7 +66,7 @@ services:
 
 networks:
   crm-network:
-    driver: overlay # Для Swarm используем overlay-сеть!
+    driver: overlay
     attachable: true
 
 volumes:
