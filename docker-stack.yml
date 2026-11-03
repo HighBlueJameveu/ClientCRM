@@ -33,7 +33,7 @@ services:
       replicas: 1
 
   backend:
-    image: crm-backend:latest
+    image: ghcr.io/highbluejameveu/crm-backend:latest
     networks:
       - crm-network
     deploy:
@@ -46,7 +46,7 @@ services:
         condition: on-failure
 
   frontend:
-    image: crm-frontend:latest
+    image: ghcr.io/highbluejameveu/crm-frontend:latest
     networks:
       - crm-network
     deploy:
@@ -54,7 +54,7 @@ services:
       endpoint_mode: dnsrr
 
   proxy:
-    image: crm-proxy:latest
+    image: ghcr.io/highbluejameveu/crm-proxy:latest
     networks:
       - crm-network
     ports:

@@ -6,7 +6,14 @@ async function loadClients() {
         const tbody = document.getElementById('clientsTableBody');
         tbody.innerHTML = '';
 
+        let total = clients.length;
+        let inProgress = 0;
+        let closed = 0;
+
         clients.forEach(client => {
+            if (client.status === 'В работе') inProgress++;
+            if (client.status === 'Сделка закрыта') closed++;
+
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${client.id}</td>
@@ -19,6 +26,11 @@ async function loadClients() {
             `;
             tbody.appendChild(tr);
         });
+
+        document.getElementById('total-clients').innerText = total;
+        document.getElementById('in-progress-clients').innerText = inProgress;
+        document.getElementById('closed-clients').innerText = closed;
+
     } catch (error) {
         console.error('Ошибка при загрузке:', error);
     }
