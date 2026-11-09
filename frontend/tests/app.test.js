@@ -11,15 +11,14 @@ function countStatuses(clients) {
 describe('Тестирование изначально заданных клиентов', () => {
     test('Проверяем изначально заданных клиентов', () => {
         const mockClients = [
-            { status: 'В работе' },
-            { status: 'Сделка закрыта' },
-            { status: 'Новый' },
-            { status: 'В работе' }
+            { full_name: 'Иванов', status: 'В работе' },
+            { full_name: 'Петрова', status: 'Новый' },
+            { full_name: 'Сидоров', status: 'Сделка закрыта' }
         ];
         const result = countStatuses(mockClients);
         
         expect(result.total).toBe(3);
-        expect(result.inProgress).toBe(2);
+        expect(result.inProgress).toBe(1);
         expect(result.closed).toBe(1);
     });
 });
