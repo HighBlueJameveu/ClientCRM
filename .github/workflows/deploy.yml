@@ -1,4 +1,4 @@
-name: CI/CD Pipeline to GHCR
+name: CI/CD Pipeline with Tests
 
 on:
   push:
@@ -9,8 +9,62 @@ permissions:
   packages: write
 
 jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Jest and run tests
+        run: |
+          cd frontend
+          npm install --save-dev jest
+          npx jest
+
+  integration-tests:
+    runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: rootpassword
+          MYSQL_DATABASE: crm_db
+          MYSQL_USER: crm_user
+          MYSQL_PASSWORD: crm_password
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install MySQL Client
+        run: sudo apt-get install -y mysql-client
+
+      - name: Initialize Database
+        run: |
+          mysql -h 127.0.0.1 -u crm_user -pcrm_password crm_db < db/init.sql
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+
+      - name: Run CRUD Integration Test
+        env:
+          DB_HOST: 127.0.0.1
+        run: php backend/tests/crud_test.php
+
   build-and-push:
     runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests] 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -55,4 +109,4 @@ jobs:
     steps:
       - name: Simulate Deployment to Swarm
         run: |
-          echo "Образы успешно собраны и отправлены"
+          echo "Все тесты пройдены, образы успешно собраны и отправлены в GHCR"
