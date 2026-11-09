@@ -1,11 +1,11 @@
 function countStatuses(clients) {
-    let progress = 0;
+    let inProgress = 0;
     let closed = 0;
     clients.forEach(client => {
-        if (client.status === 'В работе') progress++;
+        if (client.status === 'В работе') inProgress++;
         if (client.status === 'Сделка закрыта') closed++;
     });
-    return { total: clients.length, progress, closed };
+    return { total: clients.length, inProgress, closed };
 }
 
 describe('Тестирование изначально заданных клиентов', () => {
